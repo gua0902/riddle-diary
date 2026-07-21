@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>瑞斗的日記 — 魔法手寫網頁版</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 載入 Cinzel Decorative（用於封面金箔字）、Caveat（瑞斗英文手寫筆跡）、Playfair Display（介面文字） -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Cinzel+Decorative:wght@700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 背景氛圍：木質書桌與上方光源 -->
+    <div class="desk">
+        <div class="spotlight"></div>
+        
+        <!-- 魔法日記主體 -->
+        <div class="diary-container" id="diaryContainer">
+            <!-- 魔法光暈 -->
+            <div class="magic-glow" id="magicGlow"></div>
+            
+            <!-- 日記封面 (預設關閉) -->
+            <div class="diary-cover" id="diaryCover">
+                <div class="leather-texture"></div>
+                <div class="gold-emboss">
+                    <h1>T. M. Riddle</h1>
+                    <p class="subtitle">DIARY</p>
+                </div>
+                <div class="latch"></div>
+                <div class="open-prompt">點擊翻開日記</div>
+            </div>
+            
+            <!-- 日記內頁 -->
+            <div class="diary-page" id="diaryPage">
+                <div class="paper-texture"></div>
+                <div class="paper-edges"></div>
+                
+                <!-- 手寫區域畫布 -->
+                <canvas id="writeCanvas" class="write-canvas"></canvas>
+                
+                <!-- 瑞斗思考時產生的魔法墨水漬 -->
+                <div class="thinking-blot" id="thinkingBlot">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 有機不規則墨水漬路徑 -->
+                        <path d="M50,20 C65,15 75,30 80,45 C85,60 70,75 55,80 C40,85 25,75 20,60 C15,45 35,25 50,20 Z" fill="#000" />
+                        <circle cx="45" cy="40" r="10" fill="#000" />
+                        <circle cx="55" cy="55" r="12" fill="#000" />
+                        <path d="M30,35 C35,32 40,40 35,45 C30,50 25,40 30,35 Z" fill="#000" />
+                        <path d="M65,35 C70,30 75,42 70,45 C65,48 60,40 65,35 Z" fill="#000" />
+                    </svg>
+                </div>
+                
+                <!-- 浮動提示訊息 -->
+                <div class="toast-message" id="toastMessage"></div>
+            </div>
+        </div>
+        
+        <!-- 復古懸浮工具欄 -->
+        <div class="toolbar" id="toolbar">
+            <div class="tool-holder">
+                <!-- 羽毛筆 (書寫) -->
+                <button class="tool-btn active" id="btnQuill" title="羽毛筆書寫 (Quill)">
+                    <div class="btn-icon quill-icon">✒️</div>
+                    <span class="btn-label">羽毛筆</span>
+                </button>
+                <!-- 消字藥水瓶 (擦除) -->
+                <button class="tool-btn" id="btnEraser" title="消字藥水擦除 (Eraser)">
+                    <div class="btn-icon eraser-icon">🧪</div>
+                    <span class="btn-label">消字藥水</span>
+                </button>
+                <!-- 記憶卷軸 (歷史紀錄) -->
+                <button class="tool-btn" id="btnHistory" title="記憶卷軸 (Memories)">
+                    <div class="btn-icon scroll-icon">📜</div>
+                    <span class="btn-label">記憶卷軸</span>
+                </button>
+                <!-- 蠟印按鈕 (清除頁面) -->
+                <button class="tool-btn" id="btnClear" title="合上並清除頁面 (Reset)">
+                    <div class="btn-icon seal-icon">🏵️</div>
+                    <span class="btn-label">合上日記</span>
+                </button>
+                <!-- 說明書按鈕 (畫個問號 ? 也可觸發) -->
+                <button class="tool-btn" id="btnGuide" title="使用說明 (Guide)">
+                    <div class="btn-icon info-icon">❓</div>
+                    <span class="btn-label">指引</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 記憶卷軸抽屜 -->
+        <div class="drawer" id="historyDrawer">
+            <div class="drawer-header">
+                <h2>瑞斗的記憶目錄</h2>
+                <button class="close-drawer" id="btnCloseDrawer">×</button>
+            </div>
+            <div class="drawer-content">
+                <p class="drawer-note">這裡保存著您與日記的對話片段。在羊皮紙上寫下「*show me the page about...*」或是「*show:編號*」瑞斗就會為您召喚出過去的記憶筆跡。</p>
+                <div class="memory-list" id="memoryList">
+                    <!-- 記憶項目會在此動態生成 -->
+                    <div class="no-memory">日記目前一片空白，尚未建立任何記憶。</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 指引說明彈窗 -->
+        <div class="guide-modal" id="guideModal">
+            <div class="modal-content">
+                <button class="close-modal" id="btnCloseModal">×</button>
+                <h2>魔法日記指引</h2>
+                <p>這是一本與湯姆·瑞斗聯絡的附魔日記。請遵循以下規則使用：</p>
+                <ul>
+                    <li><strong>書寫與對話</strong>：使用滑鼠、觸控筆或手指在右側羊皮紙上寫字。停止書寫 <strong>2.8 秒</strong>後，日記會<strong>吸收（溶解）</strong>您的墨水，湯姆將在短暫思考後一筆一畫地在紙上寫回覆。</li>
+                    <li><strong>擦除筆跡</strong>：點擊下方的「消字藥水」，可在紙上擦除不小心寫錯的筆劃。</li>
+                    <li><strong>召喚過去的記憶</strong>：
+                        <ul>
+                            <li>寫下「<code>show me the page about...</code>（秀出關於...的頁面）」</li>
+                            <li>寫下「<code>what do you remember?</code>（你記得什麼？）」</li>
+                            <li>湯姆會回應並在羊皮紙上重新繪製您當時的手寫線條與他的回覆，輕觸頁面任何地方即可返回現在。</li>
+                        </ul>
+                    </li>
+                    <li><strong>合上日記</strong>：點擊「合上日記」，日記會清除當前頁面並蓋起封面。再次點擊封面可重新翻開。</li>
+                    <li><strong>快速指南</strong>：在紙上畫一個大大的「<strong>?</strong>」問號，亦可直接召喚此說明書。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 載入核心 JS 程式碼 -->
+    <script src="app.js"></script>
+</body>
+</html>
