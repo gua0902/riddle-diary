@@ -1,0 +1,659 @@
+/* ==========================================================================
+   瑞斗的日記 (T. M. Riddle's Diary) - 核心樣式表
+   設計風格：古典、神祕、奢華皮革、毛邊羊皮紙、黑魔法翡翠光暈
+   ========================================================================== */
+
+/* 載入開源繁體中文手寫字型「辰宇落雁體」 */
+@font-face {
+    font-family: 'ChenYuluoyan';
+    src: url('https://cdn.jsdelivr.net/gh/Chenyu-otf/chenyuluoyan_thin@main/ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
+    font-display: swap;
+}
+
+/* 全域變數定義 */
+:root {
+    --bg-wood: #0f0905;
+    --leather-cover: #1c0e07;
+    --leather-dark: #0f0703;
+    --gold-foil: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+    --gold-static: #cda851;
+    --paper-base: #f7eed3;
+    --ink-black: #0c1520;
+    --ink-faded: #738090;
+    --magic-glow-color: rgba(30, 180, 80, 0.4); /* 墨綠色黑魔法光暈 */
+    --font-fancy: 'Cinzel Decorative', Georgia, serif;
+    --font-handwriting: 'Caveat', cursive;
+    --font-chinese-handwriting: 'ChenYuluoyan', 'Caveat', cursive;
+    --font-interface: 'Playfair Display', STKaiti, KaiTi, serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--font-interface);
+    background-color: var(--bg-wood);
+}
+
+/* --------------------------------------------------------------------------
+   書桌背景與聚焦燈光 (Desk & Spotlight)
+   -------------------------------------------------------------------------- */
+.desk {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 仿木紋漸層 */
+    background: 
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 80%),
+        linear-gradient(90deg, #150c06 0%, #20130a 30%, #150c06 50%, #25160c 80%, #150c06 100%);
+    background-size: cover;
+    perspective: 1500px;
+}
+
+.spotlight {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120vh;
+    height: 120vh;
+    background: radial-gradient(circle, rgba(250, 230, 200, 0.1) 0%, rgba(0,0,0,0) 70%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   日記容器與魔法光暈 (Diary Container & Magic Glow)
+   -------------------------------------------------------------------------- */
+.diary-container {
+    position: relative;
+    width: 800px;
+    height: 900px;
+    max-width: 90%;
+    max-height: 90%;
+    z-index: 2;
+    transition: transform 0.8s cubic-bezier(0.2, 1, 0.2, 1);
+}
+
+/* 翠綠色附魔光暈，當瑞斗思考時會呈現脈動 */
+.magic-glow {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    background: radial-gradient(circle, var(--magic-glow-color) 0%, rgba(0,0,0,0) 75%);
+    border-radius: 16px;
+    opacity: 0.15;
+    z-index: -1;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.magic-glow.pulsing {
+    animation: magicPulse 2s infinite alternate ease-in-out;
+}
+
+@keyframes magicPulse {
+    0% {
+        opacity: 0.2;
+        transform: scale(1.0);
+        filter: blur(10px);
+    }
+    100% {
+        opacity: 0.6;
+        transform: scale(1.05);
+        filter: blur(25px);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   日記封面 (Diary Cover)
+   -------------------------------------------------------------------------- */
+.diary-cover {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--leather-cover);
+    border-radius: 8px 16px 16px 8px;
+    box-shadow: 
+        0 15px 35px rgba(0,0,0,0.8),
+        inset 0 0 40px rgba(0,0,0,0.9),
+        5px 0 10px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transform-origin: left center;
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease, visibility 1.2s;
+    border-left: 15px solid var(--leather-dark);
+}
+
+/* 皮革紋理效果 */
+.leather-texture {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0.08;
+    background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 0),
+                      radial-gradient(rgba(0,0,0,0.5) 1px, transparent 0);
+    background-size: 4px 4px;
+    background-position: 0 0, 2px 2px;
+    pointer-events: none;
+}
+
+/* 金箔印字 */
+.gold-emboss {
+    text-align: center;
+    background: var(--gold-foil);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.9));
+}
+
+.gold-emboss h1 {
+    font-family: var(--font-fancy);
+    font-size: 3.5rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 5px;
+}
+
+.gold-emboss .subtitle {
+    font-family: var(--font-interface);
+    font-size: 1rem;
+    letter-spacing: 0.4em;
+    opacity: 0.9;
+    text-transform: uppercase;
+}
+
+/* 金屬鎖扣 */
+.latch {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 40px;
+    background: linear-gradient(to right, #664f1d, #bf953f, #544115);
+    border-radius: 4px 0 0 4px;
+    border: 1px solid rgba(0,0,0,0.3);
+    box-shadow: -2px 3px 5px rgba(0,0,0,0.5);
+}
+
+.open-prompt {
+    position: absolute;
+    bottom: 80px;
+    font-size: 0.9rem;
+    color: var(--gold-static);
+    letter-spacing: 0.2em;
+    animation: floatText 2s infinite ease-in-out;
+}
+
+@keyframes floatText {
+    0%, 100% { transform: translateY(0); opacity: 0.6; }
+    50% { transform: translateY(-8px); opacity: 1; }
+}
+
+/* 封面翻開動畫 */
+.diary-container.open .diary-cover {
+    transform: rotateY(-140deg);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   日記內頁 (Diary Page)
+   -------------------------------------------------------------------------- */
+.diary-page {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: var(--paper-base);
+    border-radius: 4px 8px 8px 4px;
+    box-shadow: 
+        0 10px 30px rgba(0,0,0,0.6),
+        inset 0 0 50px rgba(0,0,0,0.1),
+        inset 10px 0 20px rgba(0,0,0,0.15);
+    overflow: hidden;
+    border-left: 2px solid rgba(0,0,0,0.2);
+}
+
+/* 羊皮紙紋理與細微顆粒 */
+.paper-texture {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0.15;
+    background: 
+        radial-gradient(circle, transparent 20%, var(--paper-base) 80%),
+        repeating-linear-gradient(transparent, transparent 2px, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0.03) 4px);
+    pointer-events: none;
+}
+
+/* 仿毛邊羊皮紙邊框陰影 */
+.paper-edges {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    box-shadow: inset 0 0 35px rgba(100, 80, 50, 0.25);
+    border: 1px solid rgba(139, 115, 85, 0.3);
+    border-radius: 4px 8px 8px 4px;
+    pointer-events: none;
+}
+
+/* 手寫區域畫布 */
+.write-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    z-index: 5;
+}
+
+/* --------------------------------------------------------------------------
+   瑞斗思考墨水漬 (Thinking Blot)
+   -------------------------------------------------------------------------- */
+.thinking-blot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 180px;
+    height: 180px;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+}
+
+/* 墨水脈動縮放 */
+.thinking-blot.active {
+    opacity: 0.75;
+    transform: translate(-50%, -50%) scale(1);
+    animation: blotPulse 1.8s infinite alternate ease-in-out;
+}
+
+.thinking-blot svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+
+.thinking-blot svg path, 
+.thinking-blot svg circle {
+    fill: #060b12; /* 使用墨水深藍黑色 */
+}
+
+@keyframes blotPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.9) rotate(0deg);
+        filter: blur(1px) drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.15) rotate(5deg);
+        filter: blur(3px) drop-shadow(0 15px 25px rgba(0,0,0,0.8));
+    }
+}
+
+/* --------------------------------------------------------------------------
+   復古工具欄 (Floating Toolbar)
+   -------------------------------------------------------------------------- */
+.toolbar {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #1b120c;
+    padding: 10px 25px;
+    border-radius: 30px;
+    box-shadow: 
+        0 15px 35px rgba(0,0,0,0.7),
+        inset 0 0 10px rgba(0,0,0,0.5);
+    border: 1px solid rgba(139, 115, 85, 0.2);
+    z-index: 15;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.diary-container.open ~ .toolbar {
+    transform: translateX(-50%) translateY(0);
+}
+
+.tool-holder {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.tool-btn {
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: #a4968a;
+    transition: all 0.3s ease;
+}
+
+.tool-btn:hover {
+    color: #eed6c4;
+    background: rgba(255,255,255,0.05);
+}
+
+.tool-btn.active {
+    color: var(--gold-static);
+    background: rgba(205, 168, 81, 0.12);
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+}
+
+.btn-icon {
+    font-size: 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.tool-btn:hover .btn-icon {
+    transform: scale(1.15) rotate(-5deg);
+}
+
+.btn-label {
+    font-size: 0.75rem;
+    font-family: var(--font-interface);
+    letter-spacing: 0.1em;
+}
+
+/* --------------------------------------------------------------------------
+   側邊抽屜 (Memory Drawer)
+   -------------------------------------------------------------------------- */
+.drawer {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    height: 100%;
+    background: #140d09;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+    z-index: 30;
+    color: #d1c8c1;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.5s cubic-bezier(0.2, 1, 0.2, 1);
+    border-left: 2px solid rgba(205, 168, 81, 0.15);
+}
+
+.drawer.open {
+    right: 0;
+}
+
+.drawer-header {
+    padding: 25px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.drawer-header h2 {
+    font-family: var(--font-interface);
+    font-size: 1.4rem;
+    color: var(--gold-static);
+    letter-spacing: 0.1em;
+}
+
+.close-drawer {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #a4968a;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-drawer:hover {
+    color: #fff;
+}
+
+.drawer-content {
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.drawer-note {
+    font-style: italic;
+    color: #8f8277;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+}
+
+.memory-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.memory-item {
+    background: #1e150f;
+    border: 1px solid rgba(139, 115, 85, 0.15);
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.memory-item:hover {
+    border-color: var(--gold-static);
+    background: #251b14;
+    transform: translateY(-2px);
+}
+
+.memory-item .date {
+    font-size: 0.75rem;
+    color: var(--gold-static);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+    font-family: var(--font-interface);
+}
+
+.memory-item .gist-user {
+    font-weight: bold;
+    color: #eed6c4;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.memory-item .gist-riddle {
+    color: #a89f97;
+    font-family: var(--font-chinese-handwriting);
+    font-size: 1rem;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.no-memory {
+    text-align: center;
+    color: #8f8277;
+    padding: 40px 0;
+    font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   說明書彈窗 (Guide Modal)
+   -------------------------------------------------------------------------- */
+.guide-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(4px);
+    z-index: 40;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+.guide-modal.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: #1b120c;
+    border: 1px solid rgba(205, 168, 81, 0.2);
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    padding: 35px;
+    color: #d1c8c1;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+    transform: scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.guide-modal.open .modal-content {
+    transform: scale(1);
+}
+
+.close-modal {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #a4968a;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-modal:hover {
+    color: #fff;
+}
+
+.modal-content h2 {
+    font-family: var(--font-interface);
+    color: var(--gold-static);
+    margin-bottom: 20px;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding-bottom: 10px;
+}
+
+.modal-content p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.modal-content ul {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-content ul li {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    position: relative;
+    padding-left: 20px;
+}
+
+.modal-content ul li::before {
+    content: "✦";
+    position: absolute;
+    left: 0;
+    color: var(--gold-static);
+}
+
+.modal-content ul ul {
+    margin-top: 10px;
+    gap: 8px;
+    padding-left: 10px;
+}
+
+.modal-content ul ul li::before {
+    content: "•";
+    color: #8f8277;
+}
+
+/* --------------------------------------------------------------------------
+   Toast 訊息提示與響應式
+   -------------------------------------------------------------------------- */
+.toast-message {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translate(-50%, 20px);
+    background: rgba(12, 21, 32, 0.85);
+    color: #eed6c4;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 20;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    font-family: var(--font-interface);
+    text-align: center;
+}
+
+.toast-message.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* 響應式優化 */
+@media (max-width: 850px) {
+    .diary-container {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+    }
+    
+    .diary-page, .diary-cover {
+        border-radius: 0;
+    }
+    
+    .toolbar {
+        bottom: 15px;
+        padding: 8px 15px;
+    }
+    
+    .tool-holder {
+        gap: 10px;
+    }
+    
+    .drawer {
+        width: 100%;
+        right: -100%;
+    }
+}
